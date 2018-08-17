@@ -2,8 +2,6 @@
 # coding: utf-8
 
 # In[1]:
-
-
 import pandas as pd
 
 # Load the s&p500 csv file to read the csv names
@@ -11,8 +9,6 @@ sp500_components = pd.read_csv('sp500.csv')
 
 
 # In[2]:
-
-
 from numba import jit
 import numpy as np
 
@@ -24,7 +20,6 @@ columns = 4    # I'm only using High, Low, Open and Close columns
 prepared_data_matrix = np.zeros((days,components,columns))
 
 # In[4]:
-
 @jit
 def add_to_data_matrix(csv_file, index):
 
@@ -53,8 +48,6 @@ def add_to_data_matrix(csv_file, index):
 
 
 # In[5]:
-
-
 import os.path   # To check whether a file exist
 
 for index in range (len(sp500_components) - 1):
@@ -70,9 +63,6 @@ for index in range (len(sp500_components) - 1):
         print("File not found!")
         
 print('Done creating prepared_data_matrix!')
-
-
-
 
 #%%
 # Use PCA to reduce dimensionality, ~500 points per day to one?
@@ -101,7 +91,6 @@ y_data = y_data.reshape(-1,1)
 x_data = reduced_dimensionality_matrix #.reshape(-1,1)
 #y_data = y_data.reshape(-1,1)
 #x_data = reduced_dimensionality_matrix.reshape(-1,1)
-
 
 
 # In[7]:

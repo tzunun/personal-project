@@ -1,0 +1,7 @@
+# Ignore the the 'quandl_api_key'
+quandl_api_key
+
+# Ignore the folder 'csv_files'
+*csv_files/*.csv
+*.csv
+.vscode*

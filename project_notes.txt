@@ -1,0 +1,31 @@
+Notes
+
+List of the S&P500 component companies, in this case by ticker symbol: in order to download you need to signup for an account at barchart.com
+the actual file is found at the following location just click on the download icon.
+https://www.barchart.com/stocks/indices/sp/sp500
+
+The historical data of each of the components is available from Quandl, you must have an account in order to obtain an API key.
+
+The Quandl library can be installed as follows:
+
+    Using conda
+        conda install -c anaconda quandl
+        or
+        pip install quandl
+        
+    Using pip3 for python 3.
+        pip3 install quandl
+
+This project uses the data of the current (as of the day it was downloaded) S&P500 components list, therefore is not 100% historically accurate.
+Some companies have been part of the of the S&P500 from its inception.  Others just a few months or sometimes days.  Therefore this project for the purpose
+of getting some calculations done assumes that all the components have been part of the S&P500 for a period of about 18 years.
+
+There are 504 companies that make up the S&P500 index. As of Nov 2, 2018 the data from the following companies is not available from Quandl 
+with a free account.  I have not checked if with a paid account I can obtain the remaining data.  These can be downloaded manually from Yahoo Finance. 
+
+    ANET Arista Networks Inc
+    BF.B Brown Forman Inc Cl B
+    BRK.B Berkshire Hath Hld Cl B
+    EVRG Evergy Inc
+    JEF Jefferies Financial Group Inc 
+

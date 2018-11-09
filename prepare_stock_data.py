@@ -39,7 +39,7 @@ def add_to_data_matrix(csv_file, index):
 for index in range (len(sp500_components) - 1):
     
     stock_symbol = str(sp500_components['Symbol'][index])    # Get the stock symbol
-    csv_file = ''.join([stock_symbol, '.csv'])    # This is the actual file to read from the local directory 
+    csv_file = ''.join(['csv_files/', stock_symbol, '.csv'])    # This is the actual file to read from the local directory 
     print(csv_file)
     
     # Read files found in the local directory
@@ -50,72 +50,5 @@ for index in range (len(sp500_components) - 1):
         
 print('Done creating prepared_data_matrix!')    # This process takes a while.
 
-## Use PCA to reduce dimensionality, ~500 points per day to one?
-#from sklearn.decomposition import PCA
-#def reduce_dimensions(daily_data):
-#    pca = PCA(n_components=1)
-#    pca.fit(daily_data)
-#    return pca.singular_values_
-#
-#reduced_dimensionality_matrix = np.zeros([days,1])
-#
-## Creating the reduced dimension matrix
-#for day in range(days - 1):
-#    reduced_dimensionality_matrix[day] = reduce_dimensions(prepared_data_matrix[day])
-#
-#print(y_data)
-#
-## X and Y data
-#y_data = pd.read_csv('SPY.csv')
-#y_data = y_data['Close'].values
-#y_data = y_data.reshape(-1,1)
-#x_data = reduced_dimensionality_matrix #.reshape(-1,1)
-##y_data = y_data.reshape(-1,1)
-##x_data = reduced_dimensionality_matrix.reshape(-1,1)
-#
-#
-## Split the data intor training set and test set
-##from sklearn.cross_validation import train_test_split
-##X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size = 0.3, random_state = 0)
-#
-## Feature scaling
-#from sklearn.preprocessing import StandardScaler
-#sc_X = StandardScaler()
-#sc_y = StandardScaler()
-#
-#X = sc_X.fit_transform(x_data)
-#y = sc_y.fit_transform(y_data)
-##scaler = StandardScaler()
-##X_train = scaler.fit_transform(X_train)
-##y_train = scaler.fit_transform(y_train)
-##
-##X_test = scaler.transform(X_test)
-##y_test = scaler.transform(y_test)
-#
-#
-##%%
-## Predicting the unpredictable, yeah right!
-#from sklearn.svm import SVR
-#from sklearn.metrics import scorer
-#from sklearn.metrics import accuracy_score
-#
-#svr_classifier = SVR(kernel="rbf",degree=1)
-#svr_classifier.fit(X, y)
-#
-#
-##%%
-## Plot the SVR results
-#
-#import matplotlib.pyplot as plt
-## Actual Data
-#plt.scatter(X,y, color = 'cyan')
-## Prediction 
-#plt.plot(X, svr_classifier.predict(X), color= 'red')
-#plt.xlabel('sp&500 stocks')
-#plt.ylabel('SPY')
-#plt.show()
-#
-#
-##%%
-#
-#y_prediction = sc_y.inverse_transform(sc_X.transform())
+# Save combined components data which now it's prepared_data_matrix as a numpy array to be used in the future and avoid reassembling the matrix again.
+np.save('data_matrix.npy', prepared_data_matrix, allow_pickle=False)

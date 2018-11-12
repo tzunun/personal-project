@@ -7,3 +7,4 @@ quandl_api_key
 .vscode/*
 logs/*
 trained_models/*
+test.py

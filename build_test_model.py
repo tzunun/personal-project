@@ -1,3 +1,6 @@
+import time
+start_time = time.time()
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,16 +8,12 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
-from keras.layers import Dropout
+from keras.layers import Dense, LSTM, Dropout
 
 filename = 'csv_files/A.csv'
-model_name = ''.join(['trained_models/','trained_lstm_model.h5'])
 
 dataset = pd.read_csv(filename)
 stock_data = dataset[['Open', 'Close']].values
-# print(stock_data)
 
 # Scale data to values between 0-1
 scaler = MinMaxScaler(feature_range=(0,1))
@@ -25,7 +24,7 @@ def split_data (data):
     # we need data to be 4586 days or less.
     data_size = len(data) 
     expected_length = 4586
-    training_percent = 0.7
+    training_percent = 0.67
     start_index = 0
 
     if data_size > expected_length:
@@ -59,17 +58,17 @@ X_test_timestep, y_test_timestep = create_timestep(testing_data)
 # Define the LSTM Model
 #def create_lstm_model():
 lstm_model = Sequential()
-lstm_model.add(LSTM(units=50, 
+lstm_model.add(LSTM(units=32, 
                 return_sequences=True, 
                 input_shape=(X_train_timestep.shape[1], 1),
                 name='layer_1'
                 ))
 lstm_model.add(Dropout(0.2))
-lstm_model.add(LSTM(units=50, return_sequences=True))
+lstm_model.add(LSTM(units=32, return_sequences=True))
 lstm_model.add(Dropout(0.2))
-lstm_model.add(LSTM(units=50, return_sequences=True))
+lstm_model.add(LSTM(units=32, return_sequences=True))
 lstm_model.add(Dropout(0.2))
-lstm_model.add(LSTM(units=50))
+lstm_model.add(LSTM(units=32))
 lstm_model.add(Dropout(0.2))
 lstm_model.add(Dense(units=1))
 lstm_model.compile(optimizer='adam', loss='mean_squared_error')
@@ -92,10 +91,9 @@ lstm_model.fit(
     )
 
 # Persist LSTM model
-lstm_model.save('trained_models/trained_model')
+lstm_model.save('trained_models/trained_model.h5')
 
 predicted_price = lstm_model.predict(X_test_timestep)
-print(predicted_price)
 
 #predicted_price = scaler.inverse_transform(predicted_price)
 
@@ -106,4 +104,5 @@ plt.title(''.join([filename, ' Stock Prediction']))
 plt.xlabel('Days')
 plt.ylabel(''.join([filename, ' Stock Price']))
 plt.legend()
+print("--- %s seconds ---" % (time.time() - start_time))   # To keep track of how long does it take the script to finish.
 plt.show()

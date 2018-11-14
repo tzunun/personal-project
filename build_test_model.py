@@ -1,14 +1,14 @@
 import time
-start_time = time.time()
+start_time = time.time()  # To find out how long the program takes to execute
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
 from keras.callbacks import TensorBoard
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
+np.random.seed(1337)  # Dreams are allowed
 
 def get_data(filename):
     dataset = pd.read_csv(filename)
@@ -62,7 +62,7 @@ def create_timestep(data):
     return X_timestep, y_timestep
 
 # Define the LSTM Model
-def define_model(input_shape):
+def create_model(input_shape):
     lstm_model = Sequential()
     lstm_model.add(LSTM(units=32, 
                     return_sequences=True, 
@@ -89,25 +89,18 @@ def tensorboard_logger():
     )
     return logger
 
-# Create the model
-def create_model(input_shape):
-    model = define_model(input_shape)
-    return model
-
 # Train the model 
 def train_the_model(lstm_model, X_train_timestep, y_train_timestep):
     logger = tensorboard_logger()
     lstm_model.fit(
         X_train_timestep,
         y_train_timestep, 
-        epochs=10, 
+        epochs=20, 
         verbose=2,
         shuffle=True,
         callbacks=[logger]
         )
     return lstm_model
-
-
 
 def plot_results(actual_value, predicted_value, filename):
     # Plotting the results
@@ -117,23 +110,25 @@ def plot_results(actual_value, predicted_value, filename):
     plt.xlabel('Days')
     plt.ylabel(''.join([filename, ' Stock Price']))
     plt.legend()
-    print("--- %s seconds ---" % (time.time() - start_time))   # To keep track of how long does it take the script to finish.
     plt.show()
     return None
 
-#main():
 if __name__ == "__main__":
-    lock = thread.allocate_lock()
-
-    # Persist LSTM model
-    lstm_model.save('trained_models/trained_model.h5')
-    predicted_value = lstm_model.predict(X_test_timestep)
-    #predicted_price = scaler.inverse_transform(predicted_price)
-    
     filename = 'csv_files/A.csv'
-    stock_data = dataset[['Open', 'Close']].values
+    dataset = get_data(filename)
+    data_values = dataset[['Open', 'Close']].values
+    scaled_data = scale_data(data_values)
+    training_data, testing_data = create_testing_training_data(scaled_data)
+    X_training_timestep, y_training_timestep = timestep(training_data)
+    X_testing_timestep, y_testing_timestep = timestep(testing_data)
+    input_shape = (X_training_timestep.shape[1],1)
+    model = create_model(input_shape)
+    trained_model = train_the_model(model, X_training_timestep, y_training_timestep)
+    trained_model.save('trained_models/trained_model.h5')
+    predicted_value = model.predict(X_testing_timestep)
+    actual_value = y_testing_timestep
+    print("--- %s seconds ---" % (time.time() - start_time))   # How long it took to finish executing the program
+    print(input_shape)
+    plot_results(actual_value, predicted_value, filename)
 
-    
-#   input_shape = (X_train_timestep.shape[1],1)
-'''The main goal is to have functions and no global variables and to be able to call this script from the final program to run the code, basically be able
-to call this program from another program in order to not repeat the code'''
+    #predicted_price = scaler.inverse_transform(predicted_price)

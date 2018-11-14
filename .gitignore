@@ -8,3 +8,4 @@ quandl_api_key
 logs/*
 trained_models/*
 test.py
+**pycache**

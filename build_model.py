@@ -18,7 +18,7 @@ def scale_data(data):
     # Scale data to values between 0-1
     scaler = MinMaxScaler(feature_range=(0,1))
     scaled_stock_data = scaler.fit_transform(data)
-    return scaled_stock_data
+    return scaled_stock_data, scaler
 
 # Split the data into training 70%, testing the rest.  The data size varies, otherwise I would have used slicing.
 def split_data (data):
@@ -56,8 +56,6 @@ def timestep(data):
 
 # Obtain timestep data
 def create_timestep(data):
-    #X_train_timestep, y_train_timestep = create_timestep(training_data)
-    #X_test_timestep, y_test_timestep = create_timestep(testing_data)
     X_timestep, y_timestep = timestep(data)
     return X_timestep, y_timestep
 
@@ -95,7 +93,7 @@ def train_the_model(lstm_model, X_train_timestep, y_train_timestep):
     lstm_model.fit(
         X_train_timestep,
         y_train_timestep, 
-        epochs=20, 
+        epochs=1, 
         verbose=2,
         shuffle=True,
         callbacks=[logger]
@@ -114,10 +112,11 @@ def plot_results(actual_value, predicted_value, filename):
     return None
 
 if __name__ == "__main__":
+    #This is mostly to test the script and it works, except the part to invert the scaler values
     filename = 'csv_files/A.csv'
     dataset = get_data(filename)
     data_values = dataset[['Open', 'Close']].values
-    scaled_data = scale_data(data_values)
+    scaled_data, scaler = scale_data(data_values)
     training_data, testing_data = create_testing_training_data(scaled_data)
     X_training_timestep, y_training_timestep = timestep(training_data)
     X_testing_timestep, y_testing_timestep = timestep(testing_data)
@@ -127,8 +126,9 @@ if __name__ == "__main__":
     trained_model.save('trained_models/trained_model.h5')
     predicted_value = model.predict(X_testing_timestep)
     actual_value = y_testing_timestep
+    # Scale the values back to their original values
+    #predicted_price = scaler.inverse_transform(predicted_value)
+    #actual_value = scaler.inverse_transform(actual_value.reshape(-1,1))
     print("--- %s seconds ---" % (time.time() - start_time))   # How long it took to finish executing the program
     print(input_shape)
     plot_results(actual_value, predicted_value, filename)
-
-    #predicted_price = scaler.inverse_transform(predicted_price)
